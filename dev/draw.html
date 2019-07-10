@@ -1,0 +1,59 @@
+<!DOCTYPE html>
+<meta charset="utf-8">
+
+<canvas id="c"></canvas>
+<textarea id="t"></textarea>
+
+
+
+<script>
+
+const tools = {
+        shape : "shape",
+        circle : "circle",
+        shape : "shape",
+    }
+class Shark {
+        constructor() {
+            this.tool =     tools.shape
+            this.layers = []
+            this.initListeners()
+        }
+
+
+        initListeners() {
+            c.onmousedown = (e) => {
+                    console.log(e)
+            }
+            window.onkeydown = (e) => {
+                kcode = e.keyCode
+                switch(kcode) {
+                    case 81:
+                        this.tool = tools.shape
+                        break
+                    case 82:
+                        this.tool = tools.shape
+                        break
+                }
+            }
+        }
+    }
+    
+
+    const ctx = c.getContext("2d")
+    const shark = new Shark()
+    const draw = () => {
+        c.width += 0
+
+
+
+        requestAnimationFrame(draw)
+    }
+
+    draw()
+
+
+
+
+    
+</script>
