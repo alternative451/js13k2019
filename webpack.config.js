@@ -41,6 +41,8 @@ module.exports = {
 	},
 
 	devServer: {
-		open: true
+		open: 'google-chrome',
+		openPage: '/index-dev.html',
+		index: path.join(__dirname, 'dist', 'index-dev.html'),
 	}
 };
