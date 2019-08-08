@@ -5,15 +5,9 @@ export class Canvas {
 
         this.element.width = window.innerWidth
         this.element.height = window.innerHeight
-
-        
     }
 
-    get2DContext() {
-        return this.element.getContext('2d')
-    }
-
-    clean() {
-        this.element.width += 0
+    getGlContext() {
+        return this.element.getContext('webgl')
     }
 }

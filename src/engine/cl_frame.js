@@ -1,7 +1,15 @@
-export const  clFrame = () => {
-    ctx.fillStyle = '#313539'
-    ctx.fillRect(0,0,window.innerWidth,window.innerHeight)
+import {Render} from "./render"
 
-    ctx.fillStyle = '#9c6fad'
-    ctx.fillRect(0,0,10,10)
+export class ClFrame {
+   constructor(gl,canvas) {
+      this.renderer = new Render(gl, canvas)
+      renderer.init(gl)
+   }
+   draw() {
+      this.renderer.pepare_frame()
+
+
+      this.renderer.end_frame()
+   }
+
 }

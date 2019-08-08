@@ -3,7 +3,7 @@ class Pool {
         this.pool = new Array(poolSize)
         this.lastAwakeIndex = 0
         for(let i = 0; i < poolSize; i++){
-            let instance = constructor()
+            let instance = classLink.constructor()
             instance.sleep = this.sleep(i) /* let's go curry */
             instance.sleep = this.wake(i)
             this.pool[i] = instance

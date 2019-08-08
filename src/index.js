@@ -1,19 +1,19 @@
 import {Canvas} from "./engine/canvas"
-import {clFrame} from "./engine/cl_frame"
+import {ClFrame} from "./engine/cl_frame"
 
 const c = new Canvas()
-window.ctx = c.get2DContext()
+const gl = c.getGlContext()
 
 let now = performance.now()
 let delta = 0
 
-const loop = () => {
-    c.clean()
+const clFrame = new ClFrame(gl, c)
 
+const loop = () => {
     now = performance.now()
 
 
-    clFrame()
+    clFrame.draw()
  
     if(DEBUG) {
         delta = performance.now() - now
