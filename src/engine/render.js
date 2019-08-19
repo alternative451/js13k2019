@@ -1,5 +1,5 @@
-import {vshader} from "./shaders/vshader"
-import {fshader} from "./shaders/fshader"
+import vshader from "./shaders/vshader.vert"
+import fshader from "./shaders/fshader.frag"
 import {compile, enable_vertex_attrib} from "./shader_tool"
 
 const MAX_VERTS = 1024 * 64
@@ -32,14 +32,14 @@ export class Render {
         const gl = this.gl
 
         const vBuffer = gl.createBuffer()
-        const bufferData = new Float32Array(MAX_VERTS * 8)
+        this.bufferData = new Float32Array(MAX_VERTS * 8)
         
         gl.bindBuffer(gl.ARRAY_BUFFER, vBuffer)
-        gl.bufferData(gl.ARRAY_BUFFER, gl.DYNAMIC_DRAW)
+        gl.bufferData(gl.ARRAY_BUFFER, this.bufferData, gl.DYNAMIC_DRAW)
         
         const shaderProgram = gl.createProgram()
         
-        const compileShader = shaderTool(gl)
+        const compileShader = compile(gl)
         const enableVertexCurry = enable_vertex_attrib(gl, shaderProgram)
         
         gl.attachShader(shaderProgram, compileShader(gl.VERTEX_SHADER, vshader))
@@ -49,8 +49,8 @@ export class Render {
         gl.useProgram(shaderProgram)
         
         
-        this.camera_u = gl.getUniform(shaderProgram, "cam")
-        this.light_u = gl.getUniform(shaderProgram, "l")
+        this.camera_u = gl.getUniformLocation(shaderProgram, "cam")
+        this.light_u = gl.getUniformLocation(shaderProgram, "l")
         
         // gl.enable(gl.DEPTH_TEST)
         // gl.enable(gl.BLEND)
@@ -70,7 +70,8 @@ export class Render {
         this.light_data.fill(1)
     }
 
-    end_frame() {
+    end_frame(cam) {
+
         const gl = this.gl
 
         gl.uniform3f(this.camera_u, cam.x, cam.y, cam.z)
@@ -79,13 +80,13 @@ export class Render {
         gl.clearColor(.2, .4, .5, 1)
         gl.clear(gl.COLOR_BUFFER_BIT | gl.DEPTH_BUFFER_BIT)
 
-        gl.bufferData(gl.ARRAY_BUFFER, bufferData, GL.DYNAMIC_DRAW)
+        gl.bufferData(gl.ARRAY_BUFFER, this.bufferData, gl.DYNAMIC_DRAW)
         gl.drawArrays(gl.TRIANGLES, 0, this.vertex_count)
     }
 
     push_quad(p0, p1, p2, p3, n, tile) {
         const u = tile * TILE_FRACTION + PX_NUDGE
-        this.buffer_data.set([
+        this.bufferData.set([
             p0.x, p0.y, p0.z, u, 0, nx, ny, nz,
             p1.x, p1.y, p1.z, u + TILE_FRACTION - PX_NUDGE, 0, nx, ny, nz,
             p2.x, p2.y, p2.z, u, 1, nx, ny, nz,
@@ -95,4 +96,5 @@ export class Render {
 	    ], this.vertex_count * 8)
 	    this.vertex_count += 6;
     }
+
 }

@@ -16,6 +16,15 @@ module.exports = {
 	module: {
 		rules: [
 			{
+				test: /\.(frag|vert|glsl)$/,
+				use: [
+				  { 
+					loader: 'glsl-shader-loader',
+					options: {}  
+				  }
+				]
+			},
+			{
 				test: /.js$/,
 				include: [path.resolve(__dirname, 'src')],
 				loader: 'babel-loader',
@@ -42,7 +51,7 @@ module.exports = {
 
 	devServer: {
 		open: 'google-chrome',
-		openPage: '/index-dev.html',
+		openPage: 'dist/index-dev.html',
 		index: path.join(__dirname, 'dist', 'index-dev.html'),
 	}
 };
