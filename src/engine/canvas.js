@@ -7,7 +7,7 @@ export class Canvas {
         this.element.height = window.innerHeight
     }
 
-    getGlContext() {
-        return this.element.getContext('webgl')
+    getContext() {
+        return this.element.getContext('2d')
     }
 }
