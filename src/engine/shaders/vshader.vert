@@ -2,9 +2,9 @@ precision highp float;
 varying vec3 vl;
 varying vec2 vuv;
 
-attribute vec 3 p;
-attribute vec 2 uv;
-attribute vec 3 n;
+attribute vec3 p;
+attribute vec2 uv;
+attribute vec3 n;
 
 uniform vec3 cam;
 uniform float l[7*16]; //max_lights 16
