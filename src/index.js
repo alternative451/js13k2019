@@ -3,7 +3,7 @@ import {ClFrame} from "./game/world"
 import {V3d} from "./lib/v3d"
 
 const c = new Canvas()
-const gl = c.getGlContext()
+const ctx = c.getContext()
 
 const GAME_STATES = {
     MENU: 0,
@@ -15,7 +15,7 @@ const GAME_STATES = {
 let now = performance.now()
 let delta = 0
 
-const clFrame = new ClFrame(gl, c)
+const clFrame = new ClFrame(ctx, c)
 const cam = new V3d(0,0,0)
 
 window.gameState = GAME_STATES.MENU

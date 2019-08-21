@@ -1,12 +1,19 @@
 import { V3d } from "../lib/v3d";
 
+const CELL_W = 
+const CELL_H = 
+
 class Cell {
-    constructor() {
-        this.pos = new V3d(0,0,0)
+    constructor(x, y, z, isSource) {
+        this.pos = new V3d(x, y, z)
         this.hfluids = 0
-        this.isSource = false
+        this.isSource = isSource
 
         this.orders = new Orders()
+    }
+
+    init(world) {
+        this.neighbors = this.buildNeighbors(world)
     }
 
     render(cam) {
@@ -18,38 +25,38 @@ class Cell {
             color = "#00FF28"
         }
         ctx.beginPath()
-        ctx.moveTo(posX + camOffsetX, posY - posZ + camOffsetY)
-        ctx.lineTo(posX + camOffsetX + W, posY - posZ + camOffsetY + H)
-        ctx.lineTo(posX + camOffsetX + W * 2, posY - posZ + camOffsetY)
-        ctx.lineTo(posX + camOffsetX + W, posY - posZ + camOffsetY - H)
+        ctx.moveTo(this.pos.x + cam.x, this.pos.y - posZ + cam.y)
+        ctx.lineTo(this.pos.x + cam.x + W, this.pos.y - posZ + cam.y + H)
+        ctx.lineTo(this.pos.x + cam.x + W * 2, this.pos.y - posZ + cam.y)
+        ctx.lineTo(this.pos.x + cam.x + W, this.pos.y - posZ + cam.y - H)
         ctx.closePath()
         ctx.fillStyle = color
         ctx.fill()
         ctx.beginPath()
-        ctx.moveTo(posX + camOffsetX, posY - posZ + camOffsetY)
-        ctx.lineTo(posX + camOffsetX, posY - posZ + camOffsetY + TILE_SIZE)
-        ctx.lineTo(posX + camOffsetX + W, posY - posZ + camOffsetY + H + TILE_SIZE)
-        ctx.lineTo(posX + camOffsetX + W, posY - posZ + camOffsetY + H)
+        ctx.moveTo(this.pos.x + cam.x, this.pos.y - posZ + cam.y)
+        ctx.lineTo(this.pos.x + cam.x, this.pos.y - posZ + cam.y + TILE_SIZE)
+        ctx.lineTo(this.pos.x + cam.x + W, this.pos.y - posZ + cam.y + H + TILE_SIZE)
+        ctx.lineTo(this.pos.x + cam.x + W, this.pos.y - posZ + cam.y + H)
         ctx.closePath()
         ctx.fillStyle = darkColor(color)
         ctx.fill()
         ctx.beginPath()
-        ctx.moveTo(posX + camOffsetX + W * 2, posY - posZ + camOffsetY)
-        ctx.lineTo(posX + camOffsetX + W * 2, posY - posZ + camOffsetY + TILE_SIZE)
-        ctx.lineTo(posX + camOffsetX + W, posY - posZ + camOffsetY + H + TILE_SIZE)
-        ctx.lineTo(posX + camOffsetX + W, posY - posZ + camOffsetY + H)
+        ctx.moveTo(this.pos.x + cam.x + W * 2, this.pos.y - posZ + cam.y)
+        ctx.lineTo(this.pos.x + cam.x + W * 2, this.pos.y - posZ + cam.y + TILE_SIZE)
+        ctx.lineTo(this.pos.x + cam.x + W, this.pos.y - posZ + cam.y + H + TILE_SIZE)
+        ctx.lineTo(this.pos.x + cam.x + W, this.pos.y - posZ + cam.y + H)
         ctx.closePath()
         ctx.fillStyle = clearColor(color)
         ctx.fill()
         if(DEBUG.TILE) {
          
             ctx.fillStyle = "#000"
-            ctx.fillText(d, posX + camOffsetX + W, posY - posZ + camOffsetY + H / 2)
+            ctx.fillText(d, this.pos.x + cam.x + W, this.pos.y - posZ + cam.y + H / 2)
        
         }
     }
 
-    buildNeighbors = () => {
+    buildNeighbors = (world) => {
         const nIds = []
         // 8 voisins
         if(i<mapW) { //1 ligne
@@ -75,6 +82,9 @@ class Cell {
         } else { // le centre
             nIds.push(i - mapW - 1, i - mapW, i - mapW + 1, i - 1, i + 1, i + mapW - 1, i + mapW, i + mapW + 1)
         }
-        return nIds
+
+        return nIds.map(id => {
+            return world[id]
+        })
     }
 }
