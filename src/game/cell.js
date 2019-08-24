@@ -1,90 +1,149 @@
 import { V3d } from "../lib/v3d";
+import { colors, clearColor, darkColor } from "../engine/colors"
+const TILE_SIZE = 30
+const ALPHA = 37//°
+const CELL_W = Math.sqrt(2) * TILE_SIZE
+const CELL_H = CELL_W * Math.sin(ALPHA * Math.PI / 180) 
 
-const CELL_W = 
-const CELL_H = 
+const origin = new V3d( window.innerWidth / 2, 0 )
 
-class Cell {
+export class Cell {
     constructor(x, y, z, isSource) {
         this.pos = new V3d(x, y, z)
+        /*
+
+        const proj = (x, y) => {
+        return {x: O_X + (x * W - y * W), y : O_Y + (x * H + y * H) }
+    }
+    */
+        this.proj = new V3d(
+            origin.x + (this.pos.x * CELL_W - this.pos.y * CELL_W),
+            origin.y + (this.pos.x * CELL_H + this.pos.y * CELL_H),
+            )
+
         this.hfluids = 0
         this.isSource = isSource
 
-        this.orders = new Orders()
+        this.orders = null// new Orders()
     }
 
     init(world) {
         this.neighbors = this.buildNeighbors(world)
     }
 
-    render(cam) {
-        let color = colors[map[id]]
-        if(fluids[id] === 100) {
-            color = colors[3]
-        }
-        if(hoverCase && hoverCase === id) {
-            color = "#00FF28"
-        }
+    render(ctx, cam) {
+        let color = colors[1]
+        
         ctx.beginPath()
-        ctx.moveTo(this.pos.x + cam.x, this.pos.y - posZ + cam.y)
-        ctx.lineTo(this.pos.x + cam.x + W, this.pos.y - posZ + cam.y + H)
-        ctx.lineTo(this.pos.x + cam.x + W * 2, this.pos.y - posZ + cam.y)
-        ctx.lineTo(this.pos.x + cam.x + W, this.pos.y - posZ + cam.y - H)
+        ctx.moveTo(this.proj.x + cam.x, this.proj.y - this.pos.z + cam.y)
+        ctx.lineTo(this.proj.x + cam.x + CELL_W, this.proj.y - this.pos.z + cam.y + CELL_H)
+        ctx.lineTo(this.proj.x + cam.x + CELL_W * 2, this.proj.y - this.pos.z + cam.y)
+        ctx.lineTo(this.proj.x + cam.x + CELL_W, this.proj.y - this.pos.z + cam.y - CELL_H)
         ctx.closePath()
         ctx.fillStyle = color
         ctx.fill()
         ctx.beginPath()
-        ctx.moveTo(this.pos.x + cam.x, this.pos.y - posZ + cam.y)
-        ctx.lineTo(this.pos.x + cam.x, this.pos.y - posZ + cam.y + TILE_SIZE)
-        ctx.lineTo(this.pos.x + cam.x + W, this.pos.y - posZ + cam.y + H + TILE_SIZE)
-        ctx.lineTo(this.pos.x + cam.x + W, this.pos.y - posZ + cam.y + H)
+        ctx.moveTo(this.proj.x + cam.x, this.proj.y - this.pos.z + cam.y)
+        ctx.lineTo(this.proj.x + cam.x, this.proj.y - this.pos.z + cam.y + TILE_SIZE)
+        ctx.lineTo(this.proj.x + cam.x + CELL_W, this.proj.y - this.pos.z + cam.y + CELL_H + TILE_SIZE)
+        ctx.lineTo(this.proj.x + cam.x + CELL_W, this.proj.y - this.pos.z + cam.y + CELL_H)
         ctx.closePath()
         ctx.fillStyle = darkColor(color)
         ctx.fill()
         ctx.beginPath()
-        ctx.moveTo(this.pos.x + cam.x + W * 2, this.pos.y - posZ + cam.y)
-        ctx.lineTo(this.pos.x + cam.x + W * 2, this.pos.y - posZ + cam.y + TILE_SIZE)
-        ctx.lineTo(this.pos.x + cam.x + W, this.pos.y - posZ + cam.y + H + TILE_SIZE)
-        ctx.lineTo(this.pos.x + cam.x + W, this.pos.y - posZ + cam.y + H)
+        ctx.moveTo(this.proj.x + cam.x + CELL_W * 2, this.proj.y - this.pos.z + cam.y)
+        ctx.lineTo(this.proj.x + cam.x + CELL_W * 2, this.proj.y - this.pos.z + cam.y + TILE_SIZE)
+        ctx.lineTo(this.proj.x + cam.x + CELL_W, this.proj.y - this.pos.z + cam.y + CELL_H + TILE_SIZE)
+        ctx.lineTo(this.proj.x + cam.x + CELL_W, this.proj.y - this.pos.z + cam.y + CELL_H)
         ctx.closePath()
         ctx.fillStyle = clearColor(color)
         ctx.fill()
         if(DEBUG.TILE) {
          
             ctx.fillStyle = "#000"
-            ctx.fillText(d, this.pos.x + cam.x + W, this.pos.y - posZ + cam.y + H / 2)
+            ctx.fillText(d, this.proj.x + cam.x + CELL_W, this.proj.y - this.pos.z + cam.y + CELL_H / 2)
        
         }
     }
 
-    buildNeighbors = (world) => {
+    buildNeighbors (world) {
         const nIds = []
         // 8 voisins
-        if(i<mapW) { //1 ligne
-            if(i === 0) {// coin haut gauche
-                nIds.push(i + 1, i + mapW, i + mapW + 1)
-            } else if(i === mapH * mapW - 1) {// coin haut droite 
-                nIds.push(i - 1, i + mapW - 1, i + mapW)
+        if(this.pos.y < world.dim.y) { //1 ligne
+            if(this.pos.x === 0) {// coin CELL_Haut gauche
+                nIds.push(
+                    world.get(this.pos.x + 1, this.pos.y),
+                    world.get(this.pos.x + 1, this.pos.y + 1),
+                    world.get(this.pos.x, this.pos.y + 1)
+                    )
+            } else if(this.pos.x === world.dim.x) {// coin CELL_Haut droite 
+                nIds.push(
+                    world.get(this.pos.x + 1, this.pos.y),
+                    world.get(this.pos.x + 1, this.pos.y + 1),
+                    world.get(this.pos.x, this.pos.y + 1)
+                    )
             } else { // le reste
-                nIds.push(i - 1,i + 1, i + mapW - 1, i + mapW, i + mapW + 1)
+                nIds.push(
+                    world.get(this.pos.x - 1, this.pos.y),
+                    world.get(this.pos.x + 1, this.pos.y),
+                    world.get(this.pos.x - 1, this.pos.y + 1),
+                    world.get(this.pos.x, this.pos.y + 1),
+                    world.get(this.pos.x + 1, this.pos.y + 1)
+                )
             }
-        } else if(i > mapW * (mapH - 1)) { // dern ligne
-            if(i === mapW * (mapH - 1)) { // coin bas gauche
-                nIds.push(i - mapW, i - mapW + 1, i + 1)
-            } else if(i === mapH * mapW - 1) { // coin bas droite
-                nIds.push(i - mapW - 1, i - mapW, i - 1)
+        } else if(this.pos.y === world.dim.y) { // dern ligne
+            if(this.pos.x === world.dim.x) { // coin bas gauche
+                nIds.push(
+                    world.get(this.pos.x, this.pos.y - 1),
+                    world.get(this.pos.x + 1, this.pos.y - 1),
+                    world.get(this.pos.x - 1, this.pos.y)
+                )
+            } else if(this.pos.y === world.dim.y) { // coin bas droite
+                nIds.push(
+                    world.get(this.pos.x - 1, this.pos.y - 1),
+                    world.get(this.pos.x, this.pos.y - 1),
+                    world.get(this.pos.x - 1, this.pos.y)
+                )
             } else {//le reste
-                nIds.push(i - mapW - 1, i - mapW, i - mapW + 1, i - 1, i + 1)
+                nIds.push(
+                    world.get(this.pos.x - 1, this.pos.y - 1),
+                    world.get(this.pos.x, this.pos.y - 1),
+                    world.get(this.pos.x + 1, this.pos.y - 1),
+                    world.get(this.pos.x - 1, this.pos.y),
+                    world.get(this.pos.x + 1, this.pos.y)
+                )
             }
-        } else if(i % mapW === 1) {//1ere colone
-            nIds.push(i - mapW, i - mapW + 1, i + 1, i + mapW, i + mapW + 1)            
-        } else if(i % mapW === 0) {//derniere colone
-            nIds.push(i - mapW - 1, i - mapW, i - 1, i + mapW - 1, i + mapW + 1)
+        } else if(this.pos.x === 0) {//1ere colone
+            nIds.push(
+                world.get(this.pos.x, this.pos.y - 1),
+                world.get(this.pos.x + 1, this.pos.y - 1),
+                world.get(this.pos.x + 1, this.pos.y),
+                world.get(this.pos.x, this.pos.y + 1),                
+                world.get(this.pos.x + 1, this.pos.y + 1)
+            )            
+        } else if(this.pos.x === world.dim.x) {//derniere colone
+            nIds.push(
+                world.get(this.pos.x - 1, this.pos.y - 1),
+                world.get(this.pos.x, this.pos.y - 1),
+                world.get(this.pos.x - 1, this.pos.y),
+                world.get(this.pos.x - 1, this.pos.y + 1),
+                world.get(this.pos.x, this.pos.y + 1),
+            )
         } else { // le centre
-            nIds.push(i - mapW - 1, i - mapW, i - mapW + 1, i - 1, i + 1, i + mapW - 1, i + mapW, i + mapW + 1)
+            nIds.push(
+                world.get(this.pos.x - 1, this.pos.y - 1),
+                world.get(this.pos.x, this.pos.y - 1),
+                world.get(this.pos.x + 1, this.pos.y - 1),
+
+                world.get(this.pos.x - 1, this.pos.y),
+                world.get(this.pos.x + 1, this.pos.y),
+
+                world.get(this.pos.x - 1, this.pos.y + 1),
+                world.get(this.pos.x, this.pos.y + 1),
+                world.get(this.pos.x + 1, this.pos.y + 1)
+            )
         }
 
-        return nIds.map(id => {
-            return world[id]
-        })
+        return nIds
     }
 }

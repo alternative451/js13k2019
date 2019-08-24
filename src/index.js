@@ -1,9 +1,11 @@
 import {Canvas} from "./engine/canvas"
 import {ClFrame} from "./game/world"
+import level from "./levels/world1"
 import {V3d} from "./lib/v3d"
 
 const c = new Canvas()
-const ctx = c.getContext()
+const context = c.getContext()
+const cam = new V3d(0,100,0)
 
 const GAME_STATES = {
     MENU: 0,
@@ -15,14 +17,15 @@ const GAME_STATES = {
 let now = performance.now()
 let delta = 0
 
-const clFrame = new ClFrame(ctx, c)
-const cam = new V3d(0,0,0)
+const clFrame = new ClFrame(context, cam)
+clFrame.load(level) 
+
 
 window.gameState = GAME_STATES.MENU
 
 const loop = () => {
     now = performance.now()
-    clFrame.draw(cam)
+    clFrame.render(cam)
  
     if(DEBUG) {
         delta = (performance.now() - now).toFixed(2)

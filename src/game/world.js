@@ -1,36 +1,38 @@
 import { V3d } from "../lib/v3d";
+import { Cell } from "./cell"
 
 export class ClFrame {
-   constructor(context,canvas) {
+   constructor(context, cam) {
       this.cells = []
-      this.worldX = 0
-      this.worldY = 0
+      this.dim = new V3d()
+      this.context = context
+      this.cam = cam
+   }
+
+   get(x, y) {
+      return this.cells[ x + y * this.dim.x] 
    }
 
    load(levelData) {
-      this.worldX = levelData.width
-      this.worldY = levelData.height
+      this.dim.set(levelData.width, levelData.height)
 
       this.cells = levelData.data.map((cellData, i) => {
-         let cell = new cell(i % levelData.width, i / levelData, 0, cellData === 1)
-         this.cells.push(cell)
+         return new Cell(i % this.dim.x, Math.floor(i / this.dim.x), 0, cellData === 1)
       })
       this.cells.forEach((cell) => {
          cell.init(this)
       })
+
+      console.log(this.cells)
    }
 
-   draw(cam) {
+
+   render() {
       let d = 0
-        for(let i = 0; i <= mapH + mapW; i ++) {
-            for(let y = Math.max(0, i - mapH + 1); y <= Math.min(i, mapW - 1); y ++) {
-                const x = i - y
-                const tilePos = proj(x, y)
-               
-                const mindex = x + y * mapH
-                for(let j = 0; j < elevations[mindex]; j ++) {
-                  this.cells.render()
-                }                        
+        for(let i = 0; i <= this.dim.y + this.dim.x; i ++) {
+            for(let y = Math.max(0, i - this.dim.y + 1); y <= Math.min(i, this.dim.x - 1); y ++) {
+               const x = i - y
+               this.get(x,y).render(this.context,this.cam)             
             }
         }
    }
