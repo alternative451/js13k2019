@@ -3,7 +3,10 @@ import {ClFrame} from "./game/world"
 import level from "./levels/world1"
 import {V3d} from "./lib/v3d"
 
+import {Inputs} from './game/inputs'
 const c = new Canvas()
+
+window.inputs = new Inputs()
 const context = c.getContext()
 const cam = new V3d(0,100,0)
 
@@ -24,6 +27,7 @@ clFrame.load(level)
 window.gameState = GAME_STATES.MENU
 
 const loop = () => {
+    c.element.width += 0
     now = performance.now()
     clFrame.render(cam)
  

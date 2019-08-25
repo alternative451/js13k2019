@@ -1,3 +1,38 @@
-export class Input {
-    
+import { V3d } from "../lib/v3d";
+
+export class Inputs {
+    constructor() {
+
+        this.mousePos = new V3d()
+        this.keys = {}
+        this.isMouseDown = false
+        window.onkeydown = (e) => {
+            this.keys[e.code] === true
+        }
+
+        window.onkeyup = (e) => {
+            this.keys[e.code] === false
+        }
+
+        window.onmousemove = (e) => {
+            this.mousePos.set(e.clientX, e.clientY, 0)
+        }
+
+        window.onmousedown = (e) => {
+            this.isMouseDown = true
+        }
+
+        window.onmouseup = (e) => {
+            this.isMouseDown = false
+        }
+    }
+
+    // helpers 
+    isUp() {
+        return this.keys['up'] 
+    }
+}
+
+if(DEBUG.INPUT) {
+   // debugInput.innerText = mousePos            
 }

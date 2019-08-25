@@ -18,6 +18,10 @@ export class V3d {
         return this
     }
 
+    toString() {
+        return `${this.x} ${this.y}`
+    }
+
     clone() {
         return new V2d(this.x, this.y, this.z)
     }

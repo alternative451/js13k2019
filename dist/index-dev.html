@@ -8,15 +8,37 @@
         overflow: hidden;
       }
 
+      #debug, #ui {
+        position: absolute;
+      }
+
+      #ui {
+        bottom: 0;
+        widows: 100%;
+        height: 100px;
+      }
     </style>
     <meta charset="UTF-8">
     <title>Webpack App</title>
   </head>
   <body>
 
-    <script>
-      window.DEBUG = true
-    </script>
-    <div id="ctx"></div>
+      <script>
+        window.DEBUG = {
+          TILE: true,
+          TIME: true,
+          INPUTS: true,
+        }
+      </script>
+      <div id=debug>
+        <div id="ctx"></div>
+        <div id="debugInput"></div>
+      </div>
+      <div id="editor">
+          <button onclick="window.switch(1)"></button>
+          <button onclick="window.switch(1)"></button>
+          <button onclick="window.switch(1)"></button>
+          <button onclick="window.switch(1)"></button>
+      </div>
   <script type="text/javascript" src="/dist/bundle.js"></script></body>
 </html>

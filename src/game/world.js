@@ -7,6 +7,8 @@ export class ClFrame {
       this.dim = new V3d()
       this.context = context
       this.cam = cam
+
+      this.selected = null
    }
 
    get(x, y) {
@@ -23,14 +25,13 @@ export class ClFrame {
          cell.init(this)
       })
 
-      console.log(this.cells)
+      console.log(this.dim)
    }
 
 
    render() {
-      let d = 0
         for(let i = 0; i <= this.dim.y + this.dim.x; i ++) {
-            for(let y = Math.max(0, i - this.dim.y + 1); y <= Math.min(i, this.dim.x - 1); y ++) {
+            for(let y = Math.max(0, i - this.dim.x + 1); y <= Math.min(i, this.dim.y - 1); y ++) {
                const x = i - y
                this.get(x,y).render(this.context,this.cam)             
             }
@@ -38,8 +39,26 @@ export class ClFrame {
    }
 
    update(dt) {
-      
-   }
+      this.cells.forEach(cell => {
+         cell.update(dt)
+      })
+      /*
+      for(let i  = 0; i < this.cells.length; i++) {
+         if(i === SOURCE_IDS[0]) {
+             nextStepFluids[i] = zeroCentClamp(fluids[i] + FLUID_GROWTH)
+         }
+         if(fluids[i] >= FLUID_LIMIT) {
+             const neighborsIds = getNeighbors(i)
+             neighborsIds.forEach(id => {
+                 nextStepFluids[id] = zeroCentClamp( fluids[id] + FLUID_GROWTH / neighborsIds.length )
+             })
+         } else {
+             nextStepFluids[i] = fluids[i]
+         }
+     }
+     fluids = nextStepFluids
+   }*/
+}
 
 
 
