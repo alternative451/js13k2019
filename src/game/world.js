@@ -3,6 +3,7 @@ import { Cell } from "./cell"
 
 export class ClFrame {
    constructor(context, cam) {
+      this.shouldRender = false
       this.cells = []
       this.dim = new V3d()
       this.context = context
@@ -16,6 +17,7 @@ export class ClFrame {
    }
 
    load(levelData) {
+      this.shouldRender = false
       this.dim.set(levelData.width, levelData.height)
 
       this.cells = levelData.data.map((cellData, i) => {
@@ -24,18 +26,31 @@ export class ClFrame {
       this.cells.forEach((cell) => {
          cell.init(this)
       })
+      this.shouldRender = true
+   }
 
-      console.log(this.dim)
+   createCowLevel(dimString) {
+      this.shouldRender = false
+      const dim = parseInt(dimString, 10)
+      this.dim.set(dim,dim)
+      this.cells = []
+      for(let i = 0; i < dim * dim; i ++) {this.cells.push(new Cell(i % this.dim.x, Math.floor(i / this.dim.x), 0, 0))}
+      this.cells.forEach((cell) => {
+         cell.init(this)
+      })
+      this.shouldRender = true
    }
 
 
    render() {
+      if(this.shouldRender) {
         for(let i = 0; i <= this.dim.y + this.dim.x; i ++) {
             for(let y = Math.max(0, i - this.dim.x + 1); y <= Math.min(i, this.dim.y - 1); y ++) {
                const x = i - y
                this.get(x,y).render(this.context,this.cam)             
             }
         }
+      }
    }
 
    update(dt) {

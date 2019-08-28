@@ -4,7 +4,8 @@ import level from "./levels/world1"
 import {V3d} from "./lib/v3d"
 
 import {Inputs} from './game/inputs'
-const c = new Canvas()
+import { Editor } from "./game/editor";
+const c = new Canvas(true)
 
 window.inputs = new Inputs()
 const context = c.getContext()
@@ -21,8 +22,10 @@ let now = performance.now()
 let delta = 0
 
 const clFrame = new ClFrame(context, cam)
-clFrame.load(level) 
+const ed = new Editor(clFrame)
 
+//clFrame.load(level) 
+clFrame.createCowLevel(cowSize.value)
 
 window.gameState = GAME_STATES.MENU
 
@@ -30,13 +33,14 @@ const loop = () => {
     c.element.width += 0
     now = performance.now()
     clFrame.render(cam)
+    ed.render(cam)
  
     if(DEBUG) {
         delta = (performance.now() - now).toFixed(2)
         window.ctx.innerText = `${delta} - ${16 - delta}`, 20, 10
     }
     clFrame.update(delta)
-
+    ed.update(delta)
 
     requestAnimationFrame(loop)
 }

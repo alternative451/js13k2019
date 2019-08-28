@@ -7,11 +7,11 @@ export class Inputs {
         this.keys = {}
         this.isMouseDown = false
         window.onkeydown = (e) => {
-            this.keys[e.code] === true
+            this.keys[e.code] = true
         }
 
         window.onkeyup = (e) => {
-            this.keys[e.code] === false
+            this.keys[e.code] = false
         }
 
         window.onmousemove = (e) => {
@@ -29,7 +29,11 @@ export class Inputs {
 
     // helpers 
     isUp() {
-        return this.keys['up'] 
+        debugInput.innerHTML = this.keys 
+        return this.keys['KeyZ'] || this.keys['KeyW'] || this.keys['ArrowUp']  
+    }
+    isDown() {
+        return this.keys['KeyS'] || this.keys['ArrowDown']  
     }
 }
 

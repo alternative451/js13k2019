@@ -1,7 +1,7 @@
 import { V3d } from "../lib/v3d";
-import { colors, clearColor, darkColor } from "../engine/colors"
+import { colors, clearColor, darkColor, LightenDarkenColor } from "../engine/colors"
 import { Fluid } from "./fluid";
-import { Inputs } from "./inputs";
+import {clamp} from '../lib/utils'
 const TILE_SIZE = 30
 const ALPHA = 37//°
 const CELL_W = Math.sqrt(2) * TILE_SIZE
@@ -12,6 +12,7 @@ const origin = new V3d( window.innerWidth / 2, 0 )
 export class Cell {
     constructor(x, y, z, isSource) {
         this.pos = new V3d(x, y, z)
+        this.height = 0
         this.listenPath = new Path2D()
         this.proj = new V3d(
             origin.x + (this.pos.x * CELL_W - this.pos.y * CELL_W),
@@ -20,9 +21,16 @@ export class Cell {
 
         this.hfluids = 0
         this.futureFluids = 0
-        this.isSource = isSource
-
+        // STATE
+        this.isSource = false
+        this.isStart = false
+        this.isExit = false
+        this.isNoAction = false
+        this.isNoGPS = false
+        
         this.fluid = new Fluid()
+
+        // ED STATE
         this.isSelected = false
         this.isOver = false
     }
@@ -44,29 +52,30 @@ export class Cell {
             color = colors[2]
         }
 
+        color = LightenDarkenColor(color, -this.height * 10)
       
         
         this.listenPath = new Path2D()//ctx.beginPath()
-        this.listenPath.moveTo(this.proj.x + cam.x, this.proj.y - this.pos.z + cam.y)
-        this.listenPath.lineTo(this.proj.x + cam.x + CELL_W, this.proj.y - this.pos.z + cam.y + CELL_H)
-        this.listenPath.lineTo(this.proj.x + cam.x + CELL_W * 2, this.proj.y - this.pos.z + cam.y)
-        this.listenPath.lineTo(this.proj.x + cam.x + CELL_W, this.proj.y - this.pos.z + cam.y - CELL_H)
+        this.listenPath.moveTo(this.proj.x + cam.x, this.proj.y - this.pos.z + cam.y - this.height * CELL_H)
+        this.listenPath.lineTo(this.proj.x + cam.x + CELL_W, this.proj.y - this.pos.z + cam.y + CELL_H - this.height * CELL_H)
+        this.listenPath.lineTo(this.proj.x + cam.x + CELL_W * 2, this.proj.y - this.pos.z + cam.y - this.height * CELL_H)
+        this.listenPath.lineTo(this.proj.x + cam.x + CELL_W, this.proj.y - this.pos.z + cam.y - CELL_H - this.height * CELL_H)
         this.listenPath.closePath()
         ctx.fillStyle = color
         ctx.fill(this.listenPath)
         ctx.beginPath()
-        ctx.moveTo(this.proj.x + cam.x, this.proj.y - this.pos.z + cam.y)
+        ctx.moveTo(this.proj.x + cam.x, this.proj.y - this.pos.z + cam.y - this.height * CELL_H)
         ctx.lineTo(this.proj.x + cam.x, this.proj.y - this.pos.z + cam.y + TILE_SIZE)
         ctx.lineTo(this.proj.x + cam.x + CELL_W, this.proj.y - this.pos.z + cam.y + CELL_H + TILE_SIZE)
-        ctx.lineTo(this.proj.x + cam.x + CELL_W, this.proj.y - this.pos.z + cam.y + CELL_H)
+        ctx.lineTo(this.proj.x + cam.x + CELL_W, this.proj.y - this.pos.z + cam.y + CELL_H - this.height * CELL_H)
         ctx.closePath()
         ctx.fillStyle = darkColor(color)
         ctx.fill()
         ctx.beginPath()
-        ctx.moveTo(this.proj.x + cam.x + CELL_W * 2, this.proj.y - this.pos.z + cam.y)
+        ctx.moveTo(this.proj.x + cam.x + CELL_W * 2, this.proj.y - this.pos.z + cam.y - this.height * CELL_H)
         ctx.lineTo(this.proj.x + cam.x + CELL_W * 2, this.proj.y - this.pos.z + cam.y + TILE_SIZE)
         ctx.lineTo(this.proj.x + cam.x + CELL_W, this.proj.y - this.pos.z + cam.y + CELL_H + TILE_SIZE)
-        ctx.lineTo(this.proj.x + cam.x + CELL_W, this.proj.y - this.pos.z + cam.y + CELL_H)
+        ctx.lineTo(this.proj.x + cam.x + CELL_W, this.proj.y - this.pos.z + cam.y + CELL_H - this.height * CELL_H)
         ctx.closePath()
         ctx.fillStyle = clearColor(color)
         ctx.fill()
@@ -166,21 +175,24 @@ export class Cell {
         return nIds
     }
 
-    update(dt) {
-        const isPointInPath = this.ctx.isPointInPath(this.listenPath, inputs.mousePos.x, inputs.mousePos.y)
-        this.isOver = isPointInPath  
-        if(isPointInPath && inputs.isMouseDown) {
-            this.world.selected = this
-        }
-        if(DEBUG.INPUTS) {
-            debugInput.innerHTML = this.pos
-        }
-        if(this.world.selected === this) {
-            this.isSelected = true
-        } else {
-            this.isSelected = false
+    size(amount) {
+        this.height = clamp(this.height += amount, 0, 10)
+
+        if(DEBUG.EDITOR) {
+            debugInput.innerHTML = this.height
         }
     }
 
-    
+    update(dt) {
+        const isPointInPath = this.ctx.isPointInPath(this.listenPath, inputs.mousePos.x, inputs.mousePos.y)
+          
+        if(isPointInPath && inputs.isMouseDown) {
+            this.world.selected = this
+        } else if(isPointInPath) {
+            this.world.over = this
+        }
+
+        this.isOver = this.world.over === this
+        this.isSelected = this.world.selected === this
+    }    
 }

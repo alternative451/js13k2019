@@ -1,3 +1,16 @@
+export const color_palette = [
+    "#e3220f", //red
+    "#cb530a", //orange
+    "#1154d3", //blue
+    "#53c90c", // green
+    "#0cccc4", //teal
+    "#e4c314", //yellow
+    "#1e2021", //dark
+    "#e5eaed"//clear
+
+
+]
+
 export const colors  =  [
         "#343536",
         "#999999",
@@ -5,7 +18,7 @@ export const colors  =  [
         "#342222"//DARK RED
     ]
 
- const LightenDarkenColor = (col, amt) =>  {
+    export  const LightenDarkenColor = (col, amt) =>  {
     col = col.slice(1);
     var num = parseInt(col,16);
     var r = (num >> 16) + amt;
