@@ -1,6 +1,5 @@
 import {Canvas} from "./engine/canvas"
 import {ClFrame} from "./engine/cl_frame"
-import {V3d} from "./lib/v3d"
 
 const c = new Canvas()
 const gl = c.getGlContext()
@@ -8,8 +7,15 @@ const gl = c.getGlContext()
 let now = performance.now()
 let delta = 0
 
-const clFrame = new ClFrame(gl, c)
-const cam = new V3d()
+
+const clFrame = new ClFrame(context, cam)
+const ed = new Editor(clFrame)
+
+//clFrame.load(level) 
+clFrame.createCowLevel(cowSize.value)
+
+window.gameState = GAME_STATES.MENU
+window.gameStates = GAME_STATES
 
 const loop = () => {
     now = performance.now()
