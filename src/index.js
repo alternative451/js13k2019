@@ -1,10 +1,10 @@
 import {Canvas} from "./engine/canvas"
 import {ClFrame} from "./game/world"
-import level from "./levels/world1"
 import {V3d} from "./lib/v3d"
 
 import {Inputs} from './game/inputs'
 import { Editor } from "./game/editor";
+import { UI } from "./game/ui";
 const c = new Canvas(true)
 
 window.inputs = new Inputs()
@@ -23,6 +23,7 @@ let delta = 0
 
 const clFrame = new ClFrame(context, cam)
 const ed = new Editor(clFrame)
+const ui = new UI(clFrame, context)
 
 //clFrame.load(level) 
 clFrame.createCowLevel(cowSize.value)
@@ -35,7 +36,7 @@ const loop = () => {
     now = performance.now()
     clFrame.render(cam)
     ed.render(cam)
- 
+    ui.render(cam)
     if(DEBUG) {
         delta = (performance.now() - now).toFixed(2)
         window.ctx.innerText = `${delta} - ${16 - delta}`, 20, 10

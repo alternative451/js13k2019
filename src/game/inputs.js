@@ -29,7 +29,7 @@ export class Inputs {
 
     // helpers 
     isUp() {
-        debugInput.innerHTML = this.keys 
+        //debugInput.innerHTML = this.keys 
         return this.keys['KeyZ'] || this.keys['KeyW'] || this.keys['ArrowUp']  
     }
     isDown() {

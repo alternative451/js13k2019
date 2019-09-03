@@ -15,6 +15,7 @@
 
       #debug, #editor {
         position: absolute;
+        color: #EEE;
       }
 
       #editor {
@@ -47,6 +48,22 @@
         background: #112;
         color:#61F527;
       }
+
+      #tile_ui {
+        position: absolute;
+        top:300px;
+        width: 99px;
+        height: 99px;
+      }
+
+      #tile_ui button {
+        padding: 0;
+        border: 0;
+        margin: 0;
+        width: 33px;
+        height: 33px;
+        float: left;
+      }
       
     </style>
     <meta charset="UTF-8">
@@ -57,14 +74,26 @@
       <script>
         window.DEBUG = {
           TILE: false,
-          TIME: true,
-          INPUTS: true,
-          FLUID: true
+          TIME: false,
+          INPUTS: false,
+          FLUID: false,
+          UI: true,
         }
       </script>
       <div id=debug>
         <div id="ctx"></div>
         <div id="debugInput"></div>
+      </div>
+      <div id="tile_ui">
+        <button onclick="window.ui_push(1)">↖</button>
+        <button onclick="window.ui_push(2)"></button>
+        <button onclick="window.ui_push(3)">↗</button>
+        <button onclick="window.ui_push(4)"></button>
+        <button onclick="window.ui_push(5)"></button>
+        <button onclick="window.ui_push(6)"></button>
+        <button onclick="window.ui_push(7)">↙</button>
+        <button onclick="window.ui_push(8)"></button>
+        <button onclick="window.ui_push(9)">↘</button>
       </div>
       <div id="editor">
           <input id=cowSize value="12">

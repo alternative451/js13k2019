@@ -2,22 +2,21 @@ import { V3d } from "../lib/v3d";
 import { colors, clearColor, darkColor, LightenDarkenColor, color_palette } from "../engine/colors"
 import { Fluid } from "./fluid";
 import {clamp} from '../lib/utils'
+import { project } from "../lib/isometric_helper"
+
 const TILE_SIZE = 30
 const ALPHA = 37//°
-const CELL_W = Math.sqrt(2) * TILE_SIZE
-const CELL_H = CELL_W * Math.sin(ALPHA * Math.PI / 180) 
 
-const origin = new V3d( window.innerWidth / 2, 0 )
+window.CELL_W = Math.sqrt(2) * TILE_SIZE
+window.CELL_H = CELL_W * Math.sin(ALPHA * Math.PI / 180) 
 
 export class Cell {
     constructor(x, y, h) {
         this.pos = new V3d(x, y, 0)
         this.height = h
         this.listenPath = new Path2D()
-        this.proj = new V3d(
-            origin.x + (this.pos.x * CELL_W - this.pos.y * CELL_W),
-            origin.y + (this.pos.x * CELL_H + this.pos.y * CELL_H),
-            )
+        this.proj = new V3d()
+        project(this.pos, this.proj)
 
         this.hfluids = 0
         this.futureFluids = 0
@@ -104,7 +103,7 @@ export class Cell {
     buildNeighbors (world) {
         const nIds = []
         // 8 voisins
-        if(this.pos.y < world.dim.y) { //1 ligne
+        if(this.pos.y === 0) { //1 ligne
             if(this.pos.x === 0) {// coin CELL_Haut gauche
                 nIds.push(
                     world.get(this.pos.x + 1, this.pos.y),

@@ -1,3 +1,5 @@
+import {V3d} from "../lib/v3d"
+
 export class Canvas {
     constructor(isBlend) {
         this.element = document.createElement('canvas')
@@ -16,3 +18,6 @@ export class Canvas {
         return this.element.getContext('2d')
     }
 }
+
+
+export const canvas_zero = new V3d(window.innerWidth / 2, 0)
