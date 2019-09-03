@@ -4,8 +4,10 @@ const webpack = require('webpack');
 module.exports = {
 	mode: 'development',
 	entry: './src/index.js',
+	devtool: 'source-map',
 
 	output: {
+
 		filename: 'bundle.js',
 		publicPath: '/dist/',
 		path: path.resolve(__dirname, 'dist')
@@ -16,19 +18,9 @@ module.exports = {
 	module: {
 		rules: [
 			{
-				test: /\.(frag|vert|glsl)$/,
-				use: [
-				  { 
-					loader: 'glsl-shader-loader',
-					options: {}  
-				  }
-				]
-			},
-			{
 				test: /.js$/,
 				include: [path.resolve(__dirname, 'src')],
 				loader: 'babel-loader',
-
 				options: {
 					plugins: ['syntax-dynamic-import'],
 

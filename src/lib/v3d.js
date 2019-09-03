@@ -1,5 +1,11 @@
 export class V3d {
-    constructor(x = 0, y = 0, z = 0) {
+    constructor(x,y,z) {
+        this.x = x
+        this.y = y
+        this.z = z
+    }
+
+    set(x,y,z) {
         this.x = x
         this.y = y
         this.z = z
@@ -9,12 +15,15 @@ export class V3d {
         this.x += v.x
         this.y += v.y
         this.z += v.z
-
         return this
     }
 
+    toString() {
+        return `${this.x} ${this.y}`
+    }
+
     clone() {
-        return new V3d(this.x, this.y, this.z)
+        return new V2d(this.x, this.y, this.z)
     }
 
     length() {
