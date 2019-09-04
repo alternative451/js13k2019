@@ -12,7 +12,7 @@ export class UI {
     }
     
     uiPush(i) {
-        this.world.selected.addOrder(i)
+        this.world.selected.orders.addOrder(i)
     }
 
     render(cam) {

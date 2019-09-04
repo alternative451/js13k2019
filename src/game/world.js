@@ -1,8 +1,10 @@
 import { V3d } from "../lib/v3d";
 import { Cell } from "./cell"
+import {Entities} from "./entities"
 import {IS_NO_GPS, IS_NO_ACTION, IS_EXIT, IS_START, IS_ORDER_SOURCE} from "./editor"
 
 import l1 from "../levels/world1"
+
 export class ClFrame {
    constructor(context, cam) {
       this.shouldRender = false
@@ -15,6 +17,7 @@ export class ClFrame {
       window.world_export = () => this.export()
       window.world_import = () => this.import()
 
+      this.entities = new Entities()
    }
 
    get(x, y) {
@@ -29,6 +32,9 @@ export class ClFrame {
           const cell = new Cell(i % this.dim.x, Math.floor(i / this.dim.x), cellData.h)
           cell.isSource = cellData.d[0]
           cell.isStart = cellData.d[1]
+         if (cell.isStart) {
+            this.entities.addPlayer(cell)
+         }
           cell.isExit = cellData.d[2]
           cell.isNoAction = cellData.d[3]
           cell.isNoGPS = cellData.d[4]
@@ -75,6 +81,7 @@ export class ClFrame {
                this.get(x,y).render(this.context,this.cam)             
             }
         }
+        this.entities.render(this.context, this.cam)
       }
    }
 
@@ -121,6 +128,7 @@ export class ClFrame {
                      return
             }
          }
+         this.entities.update(dt)
       /*
       for(let i  = 0; i < this.cells.length; i++) {
          if(i === SOURCE_IDS[0]) {

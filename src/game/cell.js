@@ -3,12 +3,13 @@ import { colors, clearColor, darkColor, LightenDarkenColor, color_palette } from
 import { Fluid } from "./fluid";
 import {clamp} from '../lib/utils'
 import { project } from "../lib/isometric_helper"
+import {Orders} from "./orders"
 
 const TILE_SIZE = 30
-const ALPHA = 37//°
+const ALPHA = 37//° 
 
 window.CELL_W = Math.sqrt(2) * TILE_SIZE
-window.CELL_H = CELL_W * Math.sin(ALPHA * Math.PI / 180) 
+window.CELL_H = CELL_W * Math.sin(ALPHA * Math.PI / 180)
 
 export class Cell {
     constructor(x, y, h) {
@@ -26,6 +27,8 @@ export class Cell {
         this.isExit = false
         this.isNoAction = false
         this.isNoGPS = false
+
+        this.orders = new Orders(this)
         
         this.fluid = new Fluid()
 
@@ -98,6 +101,8 @@ export class Cell {
             ctx.fillText(this.pos, this.proj.x + cam.x + CELL_W, this.proj.y - this.pos.z + cam.y + CELL_H / 2)
        
         }
+
+        this.orders.render(ctx, cam)
     }
 
     buildNeighbors (world) {
