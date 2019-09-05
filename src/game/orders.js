@@ -13,6 +13,11 @@ export class Orders {
     this.queue.push(orderCode)
   }
 
+  burn(agent) {
+    agent.apply(this.queue)
+    this.queue = []
+  }
+
 
   render(ctx, cam) {
     ctx.fillText(this.queue.length, this.cell.proj.x + cam.x, this.cell.proj.y + cam.y)

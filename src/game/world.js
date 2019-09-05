@@ -24,6 +24,13 @@ export class ClFrame {
       return this.cells[ x + y * this.dim.x] 
    }
 
+   getIncludingCell(pos) {
+      const c = this.cells[Math.floor(pos.x) + Math.floor(pos.y) * this.dim.x]
+      if(DEBUG.DANCING_CELL) {
+         c.isNoGPS = true
+      }
+   }
+
    load(levelData) {
       this.shouldRender = false
       this.dim.set(levelData.width, levelData.height)
@@ -128,7 +135,7 @@ export class ClFrame {
                      return
             }
          }
-         this.entities.update(dt)
+      this.entities.update(dt, this)
       /*
       for(let i  = 0; i < this.cells.length; i++) {
          if(i === SOURCE_IDS[0]) {

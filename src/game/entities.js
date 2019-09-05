@@ -6,7 +6,7 @@ export class Entities {
   }
 
   addPlayer(cell) {
-    this.agents.push(new Player(this.cell.pos))
+    this.agents.push(new Player(cell.pos))
   }
 
   render(ctx, cam) {
@@ -15,9 +15,9 @@ export class Entities {
     })
   }
 
-  update(dt) {
+  update(dt, world) {
     this.agents.forEach(agent => {
-      agent.update(dt)
+      agent.update(dt, world)
     })
   }
 }
